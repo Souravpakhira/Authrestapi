@@ -17,7 +17,7 @@ app.use('/api', require('./routes/api.route'));
 app.use((req, res, next) => {
   next(createError.NotFound());
 });
-
+console.log(process.env.DBHOST);
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send({
