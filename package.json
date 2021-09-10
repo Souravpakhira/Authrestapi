@@ -11,10 +11,16 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "bcrypt": "^5.0.1",
+    "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "http-errors": "^1.8.0",
-    "morgan": "^1.10.0"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.5",
+    "morgan": "^1.10.0",
+    "redis": "^3.1.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"
