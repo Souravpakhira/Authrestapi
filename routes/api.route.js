@@ -3,11 +3,7 @@ const { verifyAccessToken } = require('../helpers/jwt_helper');
 const { rateLimiter } = require('../helpers/redis_rateLimiter');
 const AuthController = require('../Controllers/auth.controller');
 
-router.get('/', verifyAccessToken, rateLimiter, async (req, res, next) => {
-  // console.log(req);
-  // console.log(req.payload);
-  console.log(req.reply);
-  console.log(req.ttl);
+router.get('/check', verifyAccessToken, rateLimiter, async (req, res, next) => {
   const reqLeft = 10 - req.reply;
   console.log(reqLeft);
   res.json({
