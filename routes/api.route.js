@@ -1,57 +1,25 @@
 const router = require('express').Router();
-const createError = require('http-errors');
-const User = require('../Models/User.model');
-const { authSchema } = require('../helpers/validation_schema');
-const { signAccessToken, signRefreshToken } = require('../helpers/jwt_helper');
 const { verifyAccessToken } = require('../helpers/jwt_helper');
+const { rateLimiter } = require('../helpers/redis_rateLimiter');
+const AuthController = require('../Controllers/auth.controller');
 
-router.get('/', verifyAccessToken, async (req, res, next) => {
-  console.log(req.payload);
-  res.send({ message: 'Ok api is working 🚀' });
+router.get('/', verifyAccessToken, rateLimiter, async (req, res, next) => {
+  // console.log(req);
+  // console.log(req.payload);
+  console.log(req.reply);
+  console.log(req.ttl);
+  const reqLeft = 10 - req.reply;
+  console.log(reqLeft);
+  res.json({
+    message: 'Ok api is working 🚀',
+    numberOfRequestLeft: reqLeft,
+    coolDown: req.ttl,
+  });
 });
 
-router.post('/register', async (req, res, next) => {
-  try {
-    const result = await authSchema.validateAsync(req.body);
-    const duplicatEmail = await User.findOne({ email: result.email });
-    if (duplicatEmail) {
-      throw createError.Conflict(`${result.email} is already registered`);
-    }
+router.post('/register', AuthController.register);
 
-    const user = new User({ email: result.email, password: result.password });
-    const savedUser = await user.save();
-    const accessToken = await signAccessToken(savedUser.id);
-    res.send({ accessToken });
-  } catch (error) {
-    if (error.isJoi === true) error.status = 422;
-    next(error);
-  }
-});
-
-router.post('/login', async (req, res, next) => {
-  try {
-    const result = await authSchema.validateAsync(req.body);
-    const user = await User.findOne({ email: result.email });
-
-    if (!user) throw createError.NotFound('User not registered');
-
-    const isMatch = await user.isValidPassword(result.password);
-    if (!isMatch)
-      throw createError.Unauthorized('Username or password is wrong');
-
-    const accessToken = await signAccessToken(user.id);
-    const refreshToken = await signRefreshToken(user.id);
-    res.send({
-      message: 'Login',
-      accessToken,
-      refreshToken,
-    });
-  } catch (error) {
-    if (error.isJoi === true)
-      return next(createError.BadRequest('Invalid email or password'));
-    next(error);
-  }
-});
+router.post('/login', AuthController.login);
 
 router.post('/logout', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });

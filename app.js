@@ -3,14 +3,13 @@ const createError = require('http-errors');
 const morgan = require('morgan');
 require('dotenv').config();
 require('./helpers/init_mongodb');
-const redisClient = require('./helpers/init_redis');
 
 // redisClient.SET('for', 'bar');
 
-redisClient.GET('for', (err, value) => {
-  if (err) console.log(err);
-  console.log(value);
-});
+// redisClient.GET('for', (err, value) => {
+//   if (err) console.log(err);
+//   console.log(value);
+// });
 const AuthRoute = require('./routes/api.route');
 
 const app = express();

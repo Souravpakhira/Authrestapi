@@ -1,6 +1,5 @@
 const JWT = require('jsonwebtoken');
 const createError = require('http-errors');
-const { token } = require('morgan');
 
 module.exports = {
   signAccessToken: (userId) => {
@@ -9,7 +8,7 @@ module.exports = {
       const secret = process.env.ACCESS_TOKEN;
       const options = {
         audience: userId,
-        expiresIn: '15s',
+        expiresIn: '1d',
       };
       JWT.sign(payload, secret, options, (err, token) => {
         if (err) {
@@ -40,21 +39,21 @@ module.exports = {
     });
   },
 
-  signRefreshToken: (userId) => {
-    return new Promise((resolve, reject) => {
-      const payload = {};
-      const secret = process.env.REFRESH_TOKEN;
-      const options = {
-        audience: userId,
-        expiresIn: '1y',
-      };
-      JWT.sign(payload, secret, options, (err, token) => {
-        if (err) {
-          console.log(err.message);
-          reject(createError.InternalServerError());
-        }
-        return resolve(token);
-      });
-    });
-  },
+  // signRefreshToken: (userId) => {
+  //   return new Promise((resolve, reject) => {
+  //     const payload = {};
+  //     const secret = process.env.REFRESH_TOKEN;
+  //     const options = {
+  //       audience: userId,
+  //       expiresIn: '1y',
+  //     };
+  //     JWT.sign(payload, secret, options, (err, token) => {
+  //       if (err) {
+  //         console.log(err.message);
+  //         reject(createError.InternalServerError());
+  //       }
+  //       return resolve(token);
+  //     });
+  //   });
+  // },
 };
